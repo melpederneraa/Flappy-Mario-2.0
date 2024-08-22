@@ -1,0 +1,31 @@
+import greenfoot.*; 
+ // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+public class Puntos extends Actor
+{
+    public static int puntaje;
+    public static int mejorpuntaje;
+    public Puntos(){
+        puntaje= 0;
+        mejorpuntaje = 0;
+    }
+    public void act(){
+        World myWorld = getWorld();
+        myWorld.showText("Puntaje: " + String.valueOf(puntaje), 300, 75);
+        myWorld.showText("Mayor puntaje: " + String.valueOf(mejorpuntaje), 300, 40);
+        newHighScore();
+        if (Greenfoot.isKeyDown("r"))
+        {
+            puntaje = 0;
+        }
+    }
+    public static void add(int num){
+        puntaje += num;
+    }
+    public static void newHighScore(){
+        if (puntaje > mejorpuntaje)
+        {
+            mejorpuntaje = puntaje;
+        }
+    }
+}

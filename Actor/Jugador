@@ -1,0 +1,75 @@
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+
+public class Jugador extends Actor{
+    private final double FLAP = 1.8;
+    private boolean oldSpace = false;
+    private double yVel = 0;
+    private double y = 300;
+    private boolean oldTouchingPipe = false;
+    private static boolean dead;
+    public Jugador(double yVel){
+        GreenfootImage image = getImage();
+        image.scale(30, 30);
+        dead = false;
+        this.yVel = yVel;
+    }
+    public Jugador(){
+        this(0);
+    }
+    public void act() 
+    {
+        yVel += 0.024;
+        if(spacePressed()){
+            yVel = -FLAP;
+            Greenfoot.playSound("wing.wav");
+        }
+        y += yVel;
+        setLocation(getX(), y);
+        setRotation((int)(yVel * 16));
+        if(isAtEdge()){
+            dead = true;
+        }
+        boolean touchingPipe = false;
+        for(Tubito pipe : getWorld().getObjects(Tubito.class)){
+            if(Math.abs(pipe.getX() - getX()) < 40){
+                if(Math.abs(pipe.getY() + 30 - getY()) > 37){
+                    dead = true;
+                }
+                touchingPipe = true;
+            }
+        }
+        if(!oldTouchingPipe && touchingPipe && !dead){
+            Puntos.add(1);
+        }
+        oldTouchingPipe = touchingPipe;
+        if(dead){
+            MarioWorld myWorld = (MarioWorld) getWorld();
+            myWorld.gameOver();
+            getWorld().removeObject(this);
+        }
+        if (Greenfoot.isKeyDown("r"))
+        {
+            getWorld().removeObject(this);
+        }
+    }
+    public boolean spacePressed(){
+        boolean pressed = false;
+        if(Greenfoot.isKeyDown("space")){
+            if(!oldSpace){
+                pressed = true;
+            }
+            oldSpace = true;
+        }
+        else{
+            oldSpace = false;
+        }
+        return pressed;
+    }
+    
+    public static boolean isAlive(){
+        return !dead;
+    }
+    public void setLocation(double x, double y){
+        super.setLocation((int)x, (int)y);
+    }
+}
